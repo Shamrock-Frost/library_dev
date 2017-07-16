@@ -301,7 +301,7 @@ le_antisymm
     have s ⊆ interior d, from
       calc s ⊆ t : hst
        ... ⊆ interior d : (subset_interior_iff_subset_of_open ht).mpr $
-        assume x, assume : x ∈ t, let ⟨x, y, h₁, h₂, h₃⟩ := ht_comp this in hs_comp ⟨x, h₁, y, h₂, h₃⟩,
+        assume x, suppose x ∈ t, let ⟨x, y, h₁, h₂, h₃⟩ := ht_comp this in hs_comp ⟨x, h₁, y, h₂, h₃⟩,
     have interior d ∈ (@uniformity α _).sets,
       from (@uniformity α _).upwards_sets hs $ this,
     by simp [this])
@@ -486,7 +486,7 @@ lemma cauchy_of_totally_bounded_of_ultrafilter {s : set α} {f : filter α}
 
 lemma totally_bounded_iff_filter {s : set α} :
   totally_bounded s ↔ (∀f, f ≠ ⊥ → f ≤ principal s → ∃c ≤ f, cauchy c) :=
-⟨assume : totally_bounded s, assume f hf hs,
+⟨suppose totally_bounded s, assume f hf hs,
   ⟨ultrafilter_of f, ultrafilter_of_le,
     cauchy_of_totally_bounded_of_ultrafilter this
       (ultrafilter_ultrafilter_of hf) (le_trans ultrafilter_of_le hs)⟩,
@@ -1091,8 +1091,8 @@ top_unique $ assume s hs x hx ⟨a₁, a₂⟩ (h₁ : a₁ = a₂) (h₂ : a₁
 
 lemma to_topological_space_bot : @uniform_space.to_topological_space α ⊥ = ⊥ :=
 bot_unique $ assume s hs, classical.by_cases
-  (assume : s = ∅, this.symm ▸ @open_empty _ ⊥)
-  (assume : s ≠ ∅,
+  (suppose s = ∅, this.symm ▸ @open_empty _ ⊥)
+  (suppose s ≠ ∅,
     let ⟨x, hx⟩ := exists_mem_of_ne_empty this in
     have univ ⊆ _,
       from hs x hx,
@@ -1115,7 +1115,7 @@ classical.by_cases
         exact assume a b, rfl
       end
     end)
-  (assume : ¬ nonempty ι,
+  (suppose ¬ nonempty ι,
     le_antisymm
       (have supr u = ⊥, from bot_unique $ supr_le $ assume i, (this ⟨i⟩).elim,
         have @uniform_space.to_topological_space _ (supr u) = ⊥,

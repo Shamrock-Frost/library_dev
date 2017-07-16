@@ -38,7 +38,7 @@ universes u
 variables {α : Type u} [linear_ordered_ring α] {a b : α}
 
 lemma mul_nonneg_iff_right_nonneg_of_pos (h : 0 < a) : 0 ≤ b * a ↔ 0 ≤ b :=
-⟨assume : 0 ≤ b * a, nonneg_of_mul_nonneg_right this h, assume : 0 ≤ b, mul_nonneg this $ le_of_lt h⟩
+⟨suppose 0 ≤ b * a, nonneg_of_mul_nonneg_right this h, suppose 0 ≤ b, mul_nonneg this $ le_of_lt h⟩
 
 end ordered_ring
 
@@ -130,9 +130,9 @@ instance : has_mul ℚ := ⟨rat.mul⟩
 
 private def inv' : rat.num_denum → ℚ
 | ⟨n, ⟨d, h⟩⟩ := linear_order_cases_on n 0
-  (assume : n = 0, 0)
-  (assume : n < 0, ⟦⟨-d, ⟨-n, neg_pos_of_neg this⟩⟩⟧)
-  (assume : n > 0, ⟦⟨d, ⟨n, this⟩⟩⟧)
+  (suppose n = 0, 0)
+  (suppose n < 0, ⟦⟨-d, ⟨-n, neg_pos_of_neg this⟩⟩⟧)
+  (suppose n > 0, ⟦⟨d, ⟨n, this⟩⟩⟧)
 
 private lemma inv'_zero : Π{d : {d:ℤ // d > 0}}, inv' ⟨0, d⟩ = 0
 | ⟨d, p⟩ := linear_order_cases_on_eq rfl
@@ -147,13 +147,13 @@ protected def inv : ℚ → ℚ :=
 quotient.lift inv' $ λ⟨n₁, ⟨d₁, h₁⟩⟩ ⟨n₂, ⟨d₂, h₂⟩⟩,
   assume h_eq : n₁ * d₂ = n₂ * d₁,
   linear_order_cases_on n₁ 0
-    (assume : n₁ = 0,
+    (suppose n₁ = 0,
       have n₂ * d₁ = 0,
         by simp [this] at h_eq; simp [h_eq],
       have n₂ = 0,
         from (eq_zero_or_eq_zero_of_mul_eq_zero this)^.resolve_right $ (ne_of_lt h₁)^.symm,
       by simp [this, ‹n₁ = 0›, inv'_zero])
-    (assume : n₁ < 0,
+    (suppose n₁ < 0,
       have n₂ * d₁ < 0,
         from h_eq ▸ mul_neg_of_neg_of_pos this ‹0 < d₂›,
       have n₂ < 0,
@@ -163,7 +163,7 @@ quotient.lift inv' $ λ⟨n₁, ⟨d₁, h₁⟩⟩ ⟨n₂, ⟨d₂, h₂⟩⟩
         apply quotient.sound,
         simp [h_eq]
       end)
-    (assume : n₁ > 0,
+    (suppose n₁ > 0,
       have n₂ * d₁ > 0,
         from h_eq ▸ mul_pos this ‹0 < d₂›,
       have n₂ > 0,
@@ -240,12 +240,12 @@ protected lemma mul_inv_cancel : a ≠ 0 → a * a⁻¹ = 1 :=
 quotient.induction_on a $ λ⟨n, ⟨d, h⟩⟩ neq0,
 let a : rat.num_denum := ⟨n, ⟨d, h⟩⟩ in
 linear_order_cases_on n 0
-  (assume : n = 0, by rw [this, @eq_zero_of_rat_eq_zero ⟨0, ⟨d, h⟩⟩ rfl] at neq0; contradiction)
-  (assume : n < 0,
+  (suppose n = 0, by rw [this, @eq_zero_of_rat_eq_zero ⟨0, ⟨d, h⟩⟩ rfl] at neq0; contradiction)
+  (suppose n < 0,
     have @has_inv.inv rat _ ⟦a⟧ = ⟦⟨-d, ⟨-n, neg_pos_of_neg this⟩⟩⟧,
       from @inv'_neg n d h _,
     begin simp [this], apply quotient.sound, simp [rat.rel] end)
-  (assume : n > 0,
+  (suppose n > 0,
     have @has_inv.inv rat _ ⟦a⟧ = ⟦⟨d, ⟨n, this⟩⟩⟧,
       from @inv'_pos n d h _,
     begin simp [this], apply quotient.sound, simp [rat.rel] end)
@@ -325,8 +325,8 @@ instance : linear_strong_order_pair ℚ :=
 { le              := rat.le,
   lt              := λa b, a ≤ b ∧ a ≠ b,
   le_iff_lt_or_eq := assume a b,
-    ⟨assume : a ≤ b, if h : a = b then or.inr h else or.inl ⟨this, h⟩,
-      or.rec and.left (assume : a = b, show a ≤ b, from this ▸ rat.le_refl _)⟩,
+    ⟨suppose a ≤ b, if h : a = b then or.inr h else or.inl ⟨this, h⟩,
+      or.rec and.left (suppose a = b, show a ≤ b, from this ▸ rat.le_refl _)⟩,
   lt_irrefl       := assume a ⟨_, h⟩, h rfl,
   le_refl         := rat.le_refl,
   le_trans        := assume a b c h_ab h_bc,
@@ -348,7 +348,7 @@ quotient.induction_on a $ assume ⟨n, ⟨d, h⟩⟩ _, show 0 ≤ n * 1 + (- 0)
   by simp; assumption
 
 protected def nonneg_of_zero_le : 0 ≤ a → rat.nonneg a :=
-quotient.induction_on a $ assume ⟨n, ⟨d, h⟩⟩, assume : 0 ≤ n * 1 + (- 0) * d,
+quotient.induction_on a $ assume ⟨n, ⟨d, h⟩⟩, suppose 0 ≤ n * 1 + (- 0) * d,
   by simp at this; assumption
 
 instance : discrete_linear_ordered_field ℚ :=

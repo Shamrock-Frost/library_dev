@@ -125,10 +125,10 @@ assume n, if_neg n
 @[simp]
 theorem index_of_of_not_mem {l : list α} {a : α} : ¬a ∈ l → index_of a l = length l :=
 list.rec_on l
-   (assume : ¬a ∈ [], rfl)
+   (suppose ¬a ∈ [], rfl)
    (assume b l,
       assume ih : ¬a ∈ l → index_of a l = length l,
-      assume : ¬a ∈ b::l,
+      suppose ¬a ∈ b::l,
       have ¬a = b ∧ ¬a ∈ l, begin rw [mem_cons_iff, not_or_iff] at this, exact this end,
       show index_of a (b::l) = length (b::l),
         begin rw [index_of_cons, if_neg this^.left, ih this^.right], reflexivity end)
@@ -139,8 +139,8 @@ list.rec_on l
   (assume b l, assume ih : index_of a l ≤ length l,
    show index_of a (b::l) ≤ length (b::l), from
      decidable.by_cases
-       (assume : a = b, begin simp [this, index_of_cons_of_eq l (eq.refl b)], apply zero_le end)
-       (assume : a ≠ b, begin rw [index_of_cons_of_ne l this], apply succ_le_succ ih end))
+       (suppose a = b, begin simp [this, index_of_cons_of_eq l (eq.refl b)], apply zero_le end)
+       (suppose a ≠ b, begin rw [index_of_cons_of_ne l this], apply succ_le_succ ih end))
 
 lemma not_mem_of_index_of_eq_length : ∀ {a : α} {l : list α}, index_of a l = length l → a ∉ l
 | a []        := by simp
@@ -310,8 +310,8 @@ rfl
 lemma count_cons' (a b : α) (l : list α) :
   count a (b :: l) = count a l + (if a = b then 1 else 0) :=
 decidable.by_cases
-  (assume : a = b, begin rw [count_cons, if_pos this, if_pos this] end)
-  (assume : a ≠ b, begin rw [count_cons, if_neg this, if_neg this], reflexivity end)
+  (suppose a = b, begin rw [count_cons, if_pos this, if_pos this] end)
+  (suppose a ≠ b, begin rw [count_cons, if_neg this, if_neg this], reflexivity end)
 
 
 @[simp]
@@ -324,8 +324,8 @@ if_neg h
 
 lemma count_cons_ge_count (a b : α) (l : list α) : count a (b :: l) ≥ count a l :=
 decidable.by_cases
-  (assume : a = b, begin subst b, rewrite count_cons_self, apply le_succ end)
-  (assume : a ≠ b, begin rw (count_cons_of_ne this), apply le_refl end)
+  (suppose a = b, begin subst b, rewrite count_cons_self, apply le_succ end)
+  (suppose a ≠ b, begin rw (count_cons_of_ne this), apply le_refl end)
 
 -- TODO(Jeremy): without the reflexivity, this yields the goal "1 = 1". the first is from has_one,
 -- the second is succ 0. Make sure the simplifier can eventually handle this.
@@ -337,9 +337,9 @@ by simp
 lemma count_append (a : α) : ∀ l₁ l₂, count a (l₁ ++ l₂) = count a l₁ + count a l₂
 | []      l₂ := begin rw [nil_append, count_nil, zero_add] end
 | (b::l₁) l₂ := decidable.by_cases
-  (assume : a = b, by rw [←this, cons_append, count_cons_self, count_cons_self, succ_add,
+  (suppose a = b, by rw [←this, cons_append, count_cons_self, count_cons_self, succ_add,
                          count_append])
-  (assume : a ≠ b, by rw [cons_append, count_cons_of_ne this, count_cons_of_ne this, count_append])
+  (suppose a ≠ b, by rw [cons_append, count_cons_of_ne this, count_cons_of_ne this, count_append])
 
 @[simp]
 lemma count_concat (a : α) (l : list α) : count a (concat l a) = succ (count a l) :=
@@ -348,8 +348,8 @@ by rw [concat_eq_append, count_append, count_singleton]
 lemma mem_of_count_pos : ∀ {a : α} {l : list α}, count a l > 0 → a ∈ l
 | a []     h := absurd h (lt_irrefl _)
 | a (b::l) h := decidable.by_cases
-  (assume : a = b, begin subst b, apply mem_cons_self end)
-  (assume : a ≠ b,
+  (suppose a = b, begin subst b, apply mem_cons_self end)
+  (suppose a ≠ b,
    have count a l > 0, begin rw [count_cons_of_ne this] at h, exact h end,
    have a ∈ l,    from mem_of_count_pos this,
    show a ∈ b::l, from mem_cons_of_mem _ this)
@@ -357,8 +357,8 @@ lemma mem_of_count_pos : ∀ {a : α} {l : list α}, count a l > 0 → a ∈ l
 lemma count_pos_of_mem : ∀ {a : α} {l : list α}, a ∈ l → count a l > 0
 | a []     h := absurd h (not_mem_nil _)
 | a (b::l) h := or.elim h
-  (assume : a = b, begin subst b, rw count_cons_self, apply zero_lt_succ end)
-  (assume : a ∈ l, calc
+  (suppose a = b, begin subst b, rw count_cons_self, apply zero_lt_succ end)
+  (suppose a ∈ l, calc
    count a (b::l) ≥ count a l : count_cons_ge_count _ _ _
            ...    > 0         : count_pos_of_mem this)
 
@@ -376,7 +376,7 @@ have ∀ n, count a l = n → count a l = 0,
 this (count a l) rfl
 
 lemma not_mem_of_count_eq_zero {a : α} {l : list α} (h : count a l = 0) : a ∉ l :=
-assume : a ∈ l,
+suppose a ∈ l,
 have count a l > 0, from count_pos_of_mem this,
 show false, begin rw h at this, exact nat.not_lt_zero _ this end
 

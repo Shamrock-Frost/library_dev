@@ -104,7 +104,7 @@ theorem all_eq_tt_of_forall {p : α → bool} : ∀ {l : list α}, (∀ a ∈ l,
 theorem forall_mem_eq_tt_of_all_eq_tt {p : α → bool} :
   ∀ {l : list α}, all l p = tt → ∀ a ∈ l, p a = tt
 | []     h := assume a h, absurd h (not_mem_nil a)
-| (b::l) h := assume a, assume : a ∈ b::l,
+| (b::l) h := assume a, suppose a ∈ b::l,
               begin
                 simp [bool.band_eq_tt] at h, cases h with h₁ h₂,
                 simp at this, cases this with h' h',
@@ -125,8 +125,8 @@ theorem any_of_mem {p : α → bool} {a : α} : ∀ {l : list α}, a ∈ l → p
 | []     i h := absurd i (not_mem_nil a)
 | (b::l) i h :=
   or.elim (eq_or_mem_of_mem_cons i)
-    (assume : a = b, begin simp [this^.symm, bool.bor_eq_tt], exact (or.inl h) end)
-    (assume : a ∈ l, begin
+    (suppose a = b, begin simp [this^.symm, bool.bor_eq_tt], exact (or.inl h) end)
+    (suppose a ∈ l, begin
                       cases (eq_or_mem_of_mem_cons i) with h' h',
                       { simp [h'^.symm, h] },
                       simp [bool.bor_eq_tt, any_of_mem h', h]
@@ -152,8 +152,8 @@ assume x xnil, absurd xnil (not_mem_nil x)
 theorem forall_mem_cons {p : α → Prop} {a : α} {l : list α} (pa : p a) (h : ∀ x ∈ l, p x) :
   ∀ x ∈ a :: l, p x :=
 assume x xal, or.elim (eq_or_mem_of_mem_cons xal)
-  (assume : x = a, by simp [this, pa])
-  (assume : x ∈ l, by simp [this, h])
+  (suppose x = a, by simp [this, pa])
+  (suppose x ∈ l, by simp [this, h])
 
 theorem of_forall_mem_cons {p : α → Prop} {a : α} {l : list α} (h : ∀ x ∈ a :: l, p x) : p a :=
 h a (by simp)
@@ -185,8 +185,8 @@ theorem or_exists_of_exists_mem_cons {p : α → Prop} {a : α} {l : list α} (h
   p a ∨ ∃ x ∈ l, p x :=
 bexists.elim h (λ x xal px,
   or.elim (eq_or_mem_of_mem_cons xal)
-    (assume : x = a, begin rw ←this, simp [px] end)
-    (assume : x ∈ l, or.inr (bexists.intro x this px)))
+    (suppose x = a, begin rw ←this, simp [px] end)
+    (suppose x ∈ l, or.inr (bexists.intro x this px)))
 
 @[simp]
 theorem exists_mem_cons_iff (p : α → Prop) (a : α) (l : list α) :
@@ -343,10 +343,10 @@ theorem mem_of_mem_product_left {a : α} {b : β} : ∀ {l₁ l₂}, (a, b) ∈ 
 | []      l₂ h := absurd h (not_mem_nil _)
 | (x::l₁) l₂ h :=
   or.elim (mem_or_mem_of_mem_append h)
-    (assume : (a, b) ∈ map (λ b, (x, b)) l₂,
+    (suppose (a, b) ∈ map (λ b, (x, b)) l₂,
        have a = x, from eq_of_mem_map_pair₁ this,
        begin rw this, apply mem_cons_self end)
-    (assume : (a, b) ∈ product l₁ l₂,
+    (suppose (a, b) ∈ product l₁ l₂,
       have a ∈ l₁, from mem_of_mem_product_left this,
       mem_cons_of_mem _ this)
 
@@ -354,9 +354,9 @@ theorem mem_of_mem_product_right {a : α} {b : β} : ∀ {l₁ l₂}, (a, b) ∈
 | []      l₂ h := absurd h (not_mem_nil ((a, b)))
 | (x::l₁) l₂ h :=
   or.elim (mem_or_mem_of_mem_append h)
-    (assume : (a, b) ∈ map (λ b, (x, b)) l₂,
+    (suppose (a, b) ∈ map (λ b, (x, b)) l₂,
       mem_of_mem_map_pair₁ this)
-    (assume : (a, b) ∈ product l₁ l₂,
+    (suppose (a, b) ∈ product l₁ l₂,
       mem_of_mem_product_right this)
 
 theorem length_product :
@@ -515,7 +515,7 @@ def list_nat_equiv_nat : list nat ≃ nat :=
 mk to_nat of_nat of_nat_to_nat to_nat_of_nat
 
 def list_equiv_self_of_equiv_nat {α : Type} : α ≃ nat → list α ≃ α :=
-assume : α ≃ nat, calc
+suppose α ≃ nat, calc
   list α ≃ list nat : list_equiv_of_equiv this
      ... ≃ nat      : list_nat_equiv_nat
      ... ≃ α        : this

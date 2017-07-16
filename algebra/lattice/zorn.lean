@@ -127,7 +127,7 @@ end
 lemma chain_closure_total (hc₁ : chain_closure c₁) (hc₂ : chain_closure c₂) : c₁ ⊆ c₂ ∨ c₂ ⊆ c₁ :=
 have c₁ ⊆ c₂ ∨ succ_chain c₂ ⊆ c₁,
   from chain_closure_succ_total_aux hc₁ hc₂ $ assume c₃ hc₃, chain_closure_succ_total hc₃ hc₂,
-or.imp_right (assume : succ_chain c₂ ⊆ c₁, subset.trans succ_increasing this) this
+or.imp_right (suppose succ_chain c₂ ⊆ c₁, subset.trans succ_increasing this) this
 
 lemma chain_closure_succ_fixpoint (hc₁ : chain_closure c₁) (hc₂ : chain_closure c₂)
   (h_eq : succ_chain c₂ = c₂) : c₁ ⊆ c₂ :=
@@ -145,7 +145,7 @@ lemma chain_closure_succ_fixpoint_iff (hc : chain_closure c) :
 ⟨assume h, subset.antisymm
     (subset_sUnion_of_mem hc)
     (chain_closure_succ_fixpoint chain_closure_closure hc h),
-  assume : c = ⋃₀{c : set α | chain_closure c},
+  suppose c = ⋃₀{c : set α | chain_closure c},
   subset.antisymm
     (calc succ_chain c ⊆ ⋃₀{c : set α | chain_closure c} :
         subset_sUnion_of_mem $ chain_closure.succ hc
@@ -162,8 +162,8 @@ begin
     exact assume c₁ ⟨t₁, ht₁, (hc₁ : c₁ ∈ t₁)⟩ c₂ ⟨t₂, ht₂, (hc₂ : c₂ ∈ t₂)⟩ hneq,
       have t₁ ⊆ t₂ ∨ t₂ ⊆ t₁, from chain_closure_total (hs _ ht₁) (hs _ ht₂),
       or.elim this
-        (assume : t₁ ⊆ t₂, h t₂ ht₂ c₁ (this hc₁) c₂ hc₂ hneq)
-        (assume : t₂ ⊆ t₁, h t₁ ht₁ c₁ hc₁ c₂ (this hc₂) hneq) }
+        (suppose t₁ ⊆ t₂, h t₂ ht₂ c₁ (this hc₁) c₂ hc₂ hneq)
+        (suppose t₂ ⊆ t₁, h t₁ ht₁ c₁ hc₁ c₂ (this hc₂) hneq) }
 end
 
 def max_chain := (⋃₀ {c | chain_closure c})
@@ -174,7 +174,7 @@ There exists a maximal totally ordered subset of `α`.
 Note that we do not require `α` to be partially ordered by `r`. -/
 lemma max_chain_spec : is_max_chain max_chain :=
 classical.by_contradiction $
-assume : ¬ is_max_chain (⋃₀ {c | chain_closure c}),
+suppose ¬ is_max_chain (⋃₀ {c | chain_closure c}),
 have super_chain (⋃₀ {c | chain_closure c}) (succ_chain (⋃₀ {c | chain_closure c})),
   from super_of_not_max (chain_chain_closure chain_closure_closure) this,
 let ⟨h₁, h₂, (h₃ : (⋃₀ {c | chain_closure c}) ≠ succ_chain (⋃₀ {c | chain_closure c}))⟩ := this in

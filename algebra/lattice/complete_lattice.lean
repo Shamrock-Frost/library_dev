@@ -61,12 +61,12 @@ lemma Inf_le_Inf (h : s ⊆ t) : Inf t ≤ Inf s :=
 le_Inf (assume a, assume ha : a ∈ s, Inf_le $ h ha)
 
 lemma le_Sup_iff : Sup s ≤ a ↔ (∀b ∈ s, b ≤ a) :=
-⟨assume : Sup s ≤ a, assume b, assume : b ∈ s,
+⟨suppose Sup s ≤ a, assume b, suppose b ∈ s,
   le_trans (le_Sup ‹b ∈ s›) ‹Sup s ≤ a›,
   Sup_le⟩
 
 lemma Inf_le_iff : a ≤ Inf s ↔ (∀b ∈ s, a ≤ b) :=
-⟨assume : a ≤ Inf s, assume b, assume : b ∈ s,
+⟨suppose a ≤ Inf s, assume b, suppose b ∈ s,
   le_trans ‹a ≤ Inf s› (Inf_le ‹b ∈ s›),
   le_Inf⟩
 
@@ -156,7 +156,7 @@ lemma supr_le_supr_const (h : ι → ι₂) : (⨆ i:ι, a) ≤ (⨆ j:ι₂, a)
 supr_le $ le_supr _ ∘ h
 
 lemma supr_le_iff : supr s ≤ a ↔ (∀i, s i ≤ a) :=
-⟨assume : supr s ≤ a, assume i, le_trans (le_supr _ _) this, supr_le⟩
+⟨suppose supr s ≤ a, assume i, le_trans (le_supr _ _) this, supr_le⟩
 
 @[congr]
 lemma supr_congr_Prop {p q : Prop} {f₁ : p → α} {f₂ : q → α}
@@ -184,7 +184,7 @@ lemma infi_le_infi_const (h : ι₂ → ι) : (⨅ i:ι, a) ≤ (⨅ j:ι₂, a)
 le_infi $ infi_le _ ∘ h
 
 lemma le_infi_iff : a ≤ infi s ↔ (∀i, a ≤ s i) :=
-⟨assume : a ≤ infi s, assume i, le_trans this (infi_le _ _), le_infi⟩
+⟨suppose a ≤ infi s, assume i, le_trans this (infi_le _ _), le_infi⟩
 
 @[congr]
 lemma infi_congr_Prop {p q : Prop} {f₁ : p → α} {f₂ : q → α}
@@ -272,14 +272,14 @@ le_antisymm (supr_le $ assume ⟨⟩, le_refl _) (le_supr _ _)
 @[simp]
 lemma infi_exists {p : ι → Prop} {f : Exists p → α} : (⨅ x, f x) = (⨅ i, ⨅ h:p i, f ⟨i, h⟩) :=
 le_antisymm
-  (le_infi $ assume i, le_infi $ assume : p i, infi_le _ _)
+  (le_infi $ assume i, le_infi $ suppose p i, infi_le _ _)
   (le_infi $ assume ⟨i, h⟩, infi_le_of_le i $ infi_le _ _)
 
 @[simp]
 lemma supr_exists {p : ι → Prop} {f : Exists p → α} : (⨆ x, f x) = (⨆ i, ⨆ h:p i, f ⟨i, h⟩) :=
 le_antisymm
   (supr_le $ assume ⟨i, h⟩, le_supr_of_le i $ le_supr (λh:p i, f ⟨i, h⟩) _)
-  (supr_le $ assume i, supr_le $ assume : p i, le_supr _ _)
+  (supr_le $ assume i, supr_le $ suppose p i, le_supr _ _)
 
 lemma infi_and {p q : Prop} {s : p ∧ q → α} : infi s = (⨅ h₁ : p, ⨅ h₂ : q, s ⟨h₁, h₂⟩) :=
 le_antisymm
@@ -408,23 +408,23 @@ le_antisymm (supr_le $ assume ⟨⟩, le_refl _) (le_supr _ _)
 
 lemma infi_subtype {p : ι → Prop} {f : subtype p → α} : (⨅ x, f x) = (⨅ i, ⨅ h:p i, f ⟨i, h⟩) :=
 le_antisymm
-  (le_infi $ assume i, le_infi $ assume : p i, infi_le _ _)
+  (le_infi $ assume i, le_infi $ suppose p i, infi_le _ _)
   (le_infi $ assume ⟨i, h⟩, infi_le_of_le i $ infi_le _ _)
 
 lemma supr_subtype {p : ι → Prop} {f : subtype p → α} : (⨆ x, f x) = (⨆ i, ⨆ h:p i, f ⟨i, h⟩) :=
 le_antisymm
   (supr_le $ assume ⟨i, h⟩, le_supr_of_le i $ le_supr (λh:p i, f ⟨i, h⟩) _)
-  (supr_le $ assume i, supr_le $ assume : p i, le_supr _ _)
+  (supr_le $ assume i, supr_le $ suppose p i, le_supr _ _)
 
 lemma infi_sigma {p : β → Type w} {f : sigma p → α} : (⨅ x, f x) = (⨅ i, ⨅ h:p i, f ⟨i, h⟩) :=
 le_antisymm
-  (le_infi $ assume i, le_infi $ assume : p i, infi_le _ _)
+  (le_infi $ assume i, le_infi $ suppose p i, infi_le _ _)
   (le_infi $ assume ⟨i, h⟩, infi_le_of_le i $ infi_le _ _)
 
 lemma supr_sigma {p : β → Type w} {f : sigma p → α} : (⨆ x, f x) = (⨆ i, ⨆ h:p i, f ⟨i, h⟩) :=
 le_antisymm
   (supr_le $ assume ⟨i, h⟩, le_supr_of_le i $ le_supr (λh:p i, f ⟨i, h⟩) _)
-  (supr_le $ assume i, supr_le $ assume : p i, le_supr _ _)
+  (supr_le $ assume i, supr_le $ suppose p i, le_supr _ _)
 
 lemma infi_prod {γ : Type w} {f : β × γ → α} : (⨅ x, f x) = (⨅ i, ⨅ j, f (i, j)) :=
 le_antisymm

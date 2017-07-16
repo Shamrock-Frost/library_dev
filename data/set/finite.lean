@@ -29,8 +29,8 @@ attribute [simp] finite.empty
 @[simp]
 lemma finite_insert {a : α} {s : set α} (h : finite s) : finite (insert a s) :=
 classical.by_cases
-  (assume : a ∈ s, by simp [*])
-  (assume : a ∉ s, finite.insert a s this h)
+  (suppose a ∈ s, by simp [*])
+  (suppose a ∉ s, finite.insert a s this h)
 
 @[simp]
 lemma finite_singleton {a : α} : finite ({a} : set α) :=

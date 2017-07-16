@@ -125,13 +125,13 @@ open nat
 private lemma gpow_add_aux (a : α) (m n : nat) :
   gpow a ((of_nat m) + -[1+n]) = gpow a (of_nat m) * gpow a (-[1+n]) :=
 or.elim (nat.lt_or_ge m (nat.succ n))
- (assume : m < succ n,
+ (suppose m < succ n,
   have m ≤ n, from le_of_lt_succ this,
   suffices gpow a -[1+ n-m] = (gpow a (of_nat m)) * (gpow a -[1+n]), by simp [*, of_nat_add_neg_succ_of_nat_of_lt],
   suffices (a^(nat.succ (n - m)))⁻¹ = (gpow a (of_nat m)) * (gpow a -[1+n]), from this,
   suffices (a^(nat.succ n - m))⁻¹ = (gpow a (of_nat m)) * (gpow a -[1+n]), by rw ←succ_sub; assumption,
   by rw pow_sub; finish [gpow])
- (assume : m ≥ succ n,
+ (suppose m ≥ succ n,
   suffices gpow a (of_nat (m - succ n)) = (gpow a (of_nat m)) * (gpow a -[1+ n]), 
     by rw [of_nat_add_neg_succ_of_nat_of_ge]; assumption,
   suffices a ^ (m - succ n) = a^m * (a^succ n)⁻¹, from this,

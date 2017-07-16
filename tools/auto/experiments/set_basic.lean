@@ -98,7 +98,7 @@ by finish [set_eq_def]
 /- old proof
 theorem exists_mem_of_ne_empty {s : set α} (h : s ≠ ∅) : ∃ x, x ∈ s :=
 classical.by_contradiction
-  (assume : ¬ ∃ x, x ∈ s,
+  (suppose ¬ ∃ x, x ∈ s,
     have ∀ x, x ∉ s, from forall_not_of_not_exists this,
     show false, from h (eq_empty_of_forall_not_mem this))
 -/
@@ -245,7 +245,7 @@ by finish [set_eq_def, iff_def]
 
 /- old proof
 theorem nonempty_of_inter_nonempty_right {T : Type} {s t : set T} (h : s ∩ t ≠ ∅) : t ≠ ∅ :=
-assume : t = ∅,
+suppose t = ∅,
 have s ∩ t = ∅, from eq.subst (eq.symm this) (inter_empty s),
 h this
 -/
@@ -255,7 +255,7 @@ by finish [set_eq_def, iff_def]
 
 /- old proof
 theorem nonempty_of_inter_nonempty_left {T : Type} {s t : set T} (h : s ∩ t ≠ ∅) : s ≠ ∅ :=
-assume : s = ∅,
+suppose s = ∅,
 have s ∩ t = ∅,
   begin rw this, apply empty_inter end,
 h this
@@ -450,8 +450,8 @@ by finish
 /- old proof
 theorem eq_of_mem_singleton {x y : α} (h : x ∈ ({y} : set α)) : x = y :=
 or.elim (eq_or_mem_of_mem_insert h)
-  (assume : x = y, this)
-  (assume : x ∈ (∅ : set α), absurd this (not_mem_empty _))
+  (suppose x = y, this)
+  (suppose x ∈ (∅ : set α), absurd this (not_mem_empty _))
 -/
 
 theorem mem_singleton_of_eq {x y : α} (H : x = y) : x ∈ ({y} : set α) :=
@@ -468,12 +468,12 @@ by finish [set_eq_def]
 /- old proof
 theorem insert_eq (x : α) (s : set α) : insert x s = ({x} : set α) ∪ s :=
 ext (assume y, iff.intro
-  (assume : y ∈ insert x s,
-    or.elim this (assume : y = x, or.inl (or.inl this)) (assume : y ∈ s, or.inr this))
-  (assume : y ∈ ({x} : set α) ∪ s,
+  (suppose y ∈ insert x s,
+    or.elim this (suppose y = x, or.inl (or.inl this)) (suppose y ∈ s, or.inr this))
+  (suppose y ∈ ({x} : set α) ∪ s,
     or.elim this
-      (assume : y ∈ ({x} : set α), or.inl (eq_of_mem_singleton this))
-      (assume : y ∈ s, or.inr this)))
+      (suppose y ∈ ({x} : set α), or.inl (eq_of_mem_singleton this))
+      (suppose y ∈ s, or.inr this)))
 -/
 
 @[simp] theorem insert_of_has_insert (x : α) (a : set α) : has_insert.insert x a = insert x a := rfl
@@ -507,8 +507,8 @@ by finish [set_eq_def, iff_def, subset_def]
 /- old proof
 theorem eq_sep_of_subset {s t : set α} (ssubt : s ⊆ t) : s = {x ∈ t | x ∈ s} :=
 ext (assume x, iff.intro
-  (assume : x ∈ s, ⟨ssubt this, this⟩)
-  (assume : x ∈ {x ∈ t | x ∈ s}, this^.right))
+  (suppose x ∈ s, ⟨ssubt this, this⟩)
+  (suppose x ∈ {x ∈ t | x ∈ s}, this^.right))
 -/
 
 theorem sep_subset (s : set α) (p : α → Prop) : {x ∈ s | p x} ⊆ s :=
@@ -521,7 +521,7 @@ by finish [set_eq_def]
 /- old proof
 theorem forall_not_of_sep_empty {s : set α} {p : α → Prop} (h : {x ∈ s | p x} = ∅) :
   ∀ x ∈ s, ¬ p x :=
-assume x, assume : x ∈ s, assume : p x,
+assume x, suppose x ∈ s, suppose p x,
 have x ∈ {x ∈ s | p x}, from ⟨by assumption, this⟩,
 show false, from ne_empty_of_mem this h
 -/
@@ -791,7 +791,7 @@ theorem mem_image_compl (t : set α) (S : set (set α)) :
 iff.intro
   (assume ⟨t', (Ht' : t' ∈ S), (Ht : -t' = t)⟩,
     show -t ∈ S, begin rw [←Ht, compl_compl], exact Ht' end)
-  (assume : -t ∈ S,
+  (suppose -t ∈ S,
     have -(-t) ∈ compl ' S, from mem_image_of_mem compl this,
     show t ∈ compl ' S, from compl_compl t ▸ this)
 -/
@@ -804,7 +804,7 @@ theorem image_id (s : set α) : id ' s = s :=
 ext (assume x, iff.intro
   (assume ⟨x', (hx' : x' ∈ s), (x'eq : x' = x)⟩,
     show x ∈ s, begin rw [←x'eq], apply hx' end)
-  (assume : x ∈ s, mem_image_of_mem id this))
+  (suppose x ∈ s, mem_image_of_mem id this))
 -/
 
 theorem compl_compl_image (S : set (set α)) :

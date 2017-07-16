@@ -730,7 +730,7 @@ theorem mem_sUnion_eq {x : α} {S : set (set α)} : x ∈ ⋃₀ S = (∃t ∈ S
 theorem not_mem_of_not_mem_sUnion {x : α} {t : set α} {S : set (set α)}
     (hx : x ∉ ⋃₀ S) (ht : t ∈ S) :
   x ∉ t :=
-assume : x ∈ t,
+suppose x ∈ t,
 have x ∈ ⋃₀ S, from mem_sUnion this ht,
 show false, from hx this
 
@@ -785,11 +785,11 @@ theorem sInter_image (f : α → set β) (s : set α) : ⋂₀ (f '' s) = ⋂ x 
 theorem compl_sUnion (S : set (set α)) :
   - ⋃₀ S = ⋂₀ (compl '' S) :=
 set.ext $ assume x,
-  ⟨assume : ¬ (∃s∈S, x ∈ s), assume s h,
+  ⟨suppose ¬ (∃s∈S, x ∈ s), assume s h,
     match s, h with
     ._, ⟨t, hs, rfl⟩ := assume h, this ⟨t, hs, h⟩
     end,
-    assume : ∀s, s ∈ compl '' S → x ∈ s,
+    suppose ∀s, s ∈ compl '' S → x ∈ s,
     assume ⟨t, tS, xt⟩, this (compl t) (mem_image_of_mem _ tS) xt⟩
 
 -- classical
@@ -908,7 +908,7 @@ variable [semilattice_inf_bot α]
 definition disjoint (a b : α) : Prop := a ⊓ b = ⊥
 
 lemma disjoint_symm {a b : α} : disjoint a b → disjoint b a :=
-assume : a ⊓ b = ⊥, show b ⊓ a = ⊥, from this ▸ inf_comm
+suppose a ⊓ b = ⊥, show b ⊓ a = ⊥, from this ▸ inf_comm
 
 lemma disjoint_bot_left {a : α} : disjoint ⊥ a := bot_inf_eq
 lemma disjoint_bot_right {a : α} : disjoint a ⊥ := inf_bot_eq

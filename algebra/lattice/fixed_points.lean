@@ -47,7 +47,7 @@ have Sup s = lfp f,
 this ▸ p_s
 
 lemma monotone_lfp : monotone (@lfp α _) :=
-assume f g, assume : f ≤ g, le_lfp $ assume a, assume : g a ≤ a, lfp_le $ le_trans (‹f ≤ g› a) this
+assume f g, suppose f ≤ g, le_lfp $ assume a, suppose g a ≤ a, lfp_le $ le_trans (‹f ≤ g› a) this
 
 lemma le_gfp {a : α} (h : a ≤ f a) : a ≤ gfp f :=
 le_Sup h
@@ -74,7 +74,7 @@ have Inf s = gfp f,
 this ▸ p_s
 
 lemma monotone_gfp : monotone (@gfp α _) :=
-assume f g, assume : f ≤ g, gfp_le $ assume a, assume : a ≤ f a, le_gfp $ le_trans this (‹f ≤ g› a)
+assume f g, suppose f ≤ g, gfp_le $ assume a, suppose a ≤ f a, le_gfp $ le_trans this (‹f ≤ g› a)
 
 end fixedpoint
 

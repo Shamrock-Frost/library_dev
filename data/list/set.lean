@@ -224,7 +224,7 @@ theorem length_upto : ∀ n, length (upto n) = n
 | (succ n) := begin rw [upto_succ, length_cons, length_upto] end
 
 theorem upto_ne_nil_of_ne_zero {n : ℕ} (h : n ≠ 0) : upto n ≠ nil :=
-assume : upto n = nil,
+suppose upto n = nil,
 have upto n = upto 0, from upto_nil ▸ this,
 have n = 0, from calc
      n = length (upto n) : by rw length_upto
@@ -460,9 +460,9 @@ theorem disjoint_of_nodup_append : ∀ {l₁ l₂ : list α}, nodup (l₁++l₂)
   have nodup (x::(xs++l₂)),    from d,
   have x ∉ xs++l₂,             from not_mem_of_nodup_cons this,
   have nxinl₂ : x ∉ l₂,        from not_mem_of_not_mem_append_right this,
-  assume a, assume : a ∈ x::xs,
+  assume a, suppose a ∈ x::xs,
     or.elim (eq_or_mem_of_mem_cons this)
-      (assume : a = x, eq.symm this ▸ nxinl₂)
+      (suppose a = x, eq.symm this ▸ nxinl₂)
       (assume ainxs : a ∈ xs,
         have nodup (x::(xs++l₂)), from d,
         have nodup (xs++l₂),      from nodup_of_nodup_cons this,

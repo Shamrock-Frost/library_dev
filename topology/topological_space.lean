@@ -248,7 +248,7 @@ assume a, le_infi $ assume s, le_infi $ assume ⟨h₁, _⟩, principal_mono^.mp
 
 @[simp]
 lemma nhds_neq_bot {a : α} : nhds a ≠ ⊥ :=
-assume : nhds a = ⊥,
+suppose nhds a = ⊥,
 have return a = (⊥ : filter α),
   from lattice.bot_unique $ this ▸ return_le_nhds a,
 return_neq_bot this
@@ -318,7 +318,7 @@ lemma compact_adherence_nhdset {s t : set α} {f : filter α}
   (hs : compact s) (hf₂ : f ≤ principal s) (ht₁ : open' t) (ht₂ : ∀a∈s, nhds a ⊓ f ≠ ⊥ → a ∈ t) :
   t ∈ f.sets :=
 classical.by_cases mem_sets_of_neq_bot $
-  assume : f ⊓ principal (- t) ≠ ⊥,
+  suppose f ⊓ principal (- t) ≠ ⊥,
   let ⟨a, ha, (hfa : f ⊓ principal (-t) ⊓ nhds a ≠ ⊥)⟩ := hs this $ inf_le_left_of_le hf₂ in
   have a ∈ t,
     from ht₂ a ha $ neq_bot_of_le_neq_bot hfa $ le_inf inf_le_right $ inf_le_left_of_le inf_le_left,
@@ -383,7 +383,7 @@ class t2_space (α : Type u) [topological_space α] :=
 (t2 : ∀x y, x ≠ y → ∃u v : set α, open' u ∧ open' v ∧ x ∈ u ∧ y ∈ v ∧ u ∩ v = ∅)
 
 lemma eq_of_nhds_neq_bot [ht : t2_space α] {x y : α} (h : nhds x ⊓ nhds y ≠ ⊥) : x = y :=
-classical.by_contradiction $ assume : x ≠ y,
+classical.by_contradiction $ suppose x ≠ y,
 let ⟨u, v, hu, hv, hx, hy, huv⟩ := t2_space.t2 _ x y this in
 have h₁ : u ∈ (nhds x ⊓ nhds y).sets,
   from @mem_inf_sets_of_left α (nhds x) (nhds y) _ $ mem_nhds_sets hu hx,

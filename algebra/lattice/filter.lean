@@ -232,7 +232,7 @@ lemma Union_subset_Union_const {ι₂ : Sort x} {s : set α} (h : ι → ι₂) 
 @supr_le_supr_const (set α) ι ι₂ _ s h
 
 lemma diff_neq_empty {s t : set α} : s - t = ∅ ↔ s ⊆ t :=
-⟨assume h x hx, classical.by_contradiction $ assume : x ∉ t, show x ∈ (∅ : set α), from h ▸ ⟨hx, this⟩,
+⟨assume h x hx, classical.by_contradiction $ suppose x ∉ t, show x ∈ (∅ : set α), from h ▸ ⟨hx, this⟩,
   assume h, bot_unique $ assume x ⟨hx, hnx⟩, hnx $ h hx⟩
 
 @[simp]
@@ -270,11 +270,11 @@ le_antisymm
 
 lemma inf_eq_bot_iff_le_compl {α : Type u} [bounded_distrib_lattice α] {a b c : α}
   (h₁ : b ⊔ c = ⊤) (h₂ : b ⊓ c = ⊥) : a ⊓ b = ⊥ ↔ a ≤ c :=
-⟨assume : a ⊓ b = ⊥,
+⟨suppose a ⊓ b = ⊥,
   calc a ≤ a ⊓ (b ⊔ c) : by simp [h₁]
     ... = (a ⊓ b) ⊔ (a ⊓ c) : by simp [inf_sup_left]
     ... ≤ c : by simp [this, inf_le_right],
-  assume : a ≤ c,
+  suppose a ≤ c,
   bot_unique $
     calc a ⊓ b ≤ b ⊓ c : by rw [inf_comm]; exact inf_le_inf (le_refl _) this
       ... = ⊥ : h₂⟩
@@ -320,12 +320,12 @@ lemma directed_of_chain {α : Type u} {β : Type v} [weak_order β] {f : α → 
   (h : @zorn.chain α (λa b, f b ≤ f a) c) :
   directed (≤) (λx:{a:α // a ∈ c}, f (x.val)) :=
 assume ⟨a, ha⟩ ⟨b, hb⟩, classical.by_cases
-  (assume : a = b, begin simp [this]; exact ⟨⟨b, hb⟩, le_refl _⟩ end)
-  (assume : a ≠ b,
+  (suppose a = b, begin simp [this]; exact ⟨⟨b, hb⟩, le_refl _⟩ end)
+  (suppose a ≠ b,
     have f b ≤ f a ∨ f a ≤ f b, from h a ha b hb this,
     or.elim this
-      (assume : f b ≤ f a, ⟨⟨b, hb⟩, this, le_refl _⟩)
-      (assume : f a ≤ f b, ⟨⟨a, ha⟩, le_refl _, this⟩))
+      (suppose f b ≤ f a, ⟨⟨b, hb⟩, this, le_refl _⟩)
+      (suppose f a ≤ f b, ⟨⟨a, ha⟩, le_refl _, this⟩))
 
 structure filter (α : Type u) :=
 (sets           : set (set α))
@@ -553,7 +553,7 @@ assume x, false.elim
 
 lemma empty_in_sets_eq_bot {f : filter α} : ∅ ∈ f^.sets ↔ f = ⊥ :=
 ⟨assume h, bot_unique $ assume s _, f.upwards_sets h (empty_subset s),
-  assume : f = ⊥, this.symm ▸ mem_bot_sets⟩
+  suppose f = ⊥, this.symm ▸ mem_bot_sets⟩
 
 lemma inhabited_of_mem_sets {f : filter α} {s : set α} (hf : f ≠ ⊥) (hs : s ∈ f^.sets) :
   ∃x, x ∈ s :=
@@ -828,13 +828,13 @@ lemma infi_neq_bot_of_directed {f : ι → filter α}
 let ⟨x⟩ := hn in
 assume h, have he: ∅ ∈ (infi f)^.sets, from h.symm ▸ mem_bot_sets,
 classical.by_cases
-  (assume : nonempty ι,
+  (suppose nonempty ι,
     have ∃i, ∅ ∈ (f i).sets,
       by rw [infi_sets_eq hd this] at he; simp at he; assumption,
     let ⟨i, hi⟩ := this in
     hb i $ bot_unique $
     assume s _, (f i)^.upwards_sets hi $ empty_subset _)
-  (assume : ¬ nonempty ι,
+  (suppose ¬ nonempty ι,
     have univ ⊆ (∅ : set α),
     begin
       rw [←principal_mono, principal_univ, principal_empty, ←h],
@@ -866,7 +866,7 @@ assume a b h, vmap_mono h
 lemma vmap_principal {t : set β} : vmap m (principal t) = principal (vimage m t) :=
 filter_eq $ set.ext $ assume s,
   ⟨assume ⟨u, (hu : t ⊆ u), (b : vimage m u ⊆ s)⟩, subset.trans (vimage_mono hu) b,
-    assume : vimage m t ⊆ s, ⟨t, subset.refl t, this⟩⟩
+    suppose vimage m t ⊆ s, ⟨t, subset.refl t, this⟩⟩
 
 lemma vimage_mem_vmap {f : filter β} {m : α → β} {s : set β} (hs : s ∈ f.sets):
   vimage m s ∈ (vmap m f).sets :=
@@ -1482,7 +1482,7 @@ le_of_inf_eq $ ultrafilter_unique hf h inf_le_left
 
 lemma mem_or_compl_mem_of_ultrafilter (hf : ultrafilter f) (s : set α) :
   s ∈ f.sets ∨ - s ∈ f.sets :=
-or_of_not_implies $ assume : - s ∉ f.sets,
+or_of_not_implies $ suppose - s ∉ f.sets,
   have f ≤ principal s,
     from le_of_ultrafilter hf $ assume h, this $ mem_sets_of_neq_bot $ by simp [*],
   by simp at this; assumption
@@ -1490,7 +1490,7 @@ or_of_not_implies $ assume : - s ∉ f.sets,
 lemma mem_or_mem_of_ultrafilter {s t : set α} (hf : ultrafilter f) (h : s ∪ t ∈ f.sets) :
   s ∈ f.sets ∨ t ∈ f.sets :=
 (mem_or_compl_mem_of_ultrafilter hf s).imp_right
-  (assume : -s ∈ f.sets, f.upwards_sets (inter_mem_sets this h) $
+  (suppose -s ∈ f.sets, f.upwards_sets (inter_mem_sets this h) $
     assume x ⟨hnx, hx⟩, hx.resolve_left hnx)
 
 lemma mem_of_finite_sUnion_ultrafilter {s : set (set α)} (hf : ultrafilter f) (hs : finite s)
@@ -1501,7 +1501,7 @@ begin
   case finite.insert t s' ht' hs' ih {
     simp,
     exact assume h, (mem_or_mem_of_ultrafilter hf h).elim
-      (assume : t ∈ f.sets, ⟨t, this, or.inl rfl⟩)
+      (suppose t ∈ f.sets, ⟨t, this, or.inl rfl⟩)
       (assume h, let ⟨t, hts', ht⟩ := ih h in ⟨t, ht, or.inr hts'⟩) }
 end
 
@@ -1515,7 +1515,7 @@ let ⟨t, ⟨i, hi, h_eq⟩, (ht : t ∈ f.sets)⟩ := mem_of_finite_sUnion_ultr
 lemma ultrafilter_of_split {f : filter α} (hf : f ≠ ⊥) (h : ∀s, s ∈ f.sets ∨ - s ∈ f.sets) :
   ultrafilter f :=
 ⟨hf, assume g hg g_le s hs, (h s).elim id $
-  assume : - s ∈ f.sets,
+  suppose - s ∈ f.sets,
   have s ∩ -s ∈ g.sets, from inter_mem_sets hs (g_le this),
   by simp [empty_in_sets_eq_bot, hg] at this; contradiction⟩
 

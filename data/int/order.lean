@@ -91,9 +91,9 @@ have a * b > 0, by rewrite H'; apply trivial,
 have b > 0, from pos_of_mul_pos_left this H,
 have a > 0, from pos_of_mul_pos_right `a * b > 0` (le_of_lt `b > 0`),
 or.elim (le_or_gt a 1)
-  (assume : a ≤ 1,
+  (suppose a ≤ 1,
     show a = 1, from le.antisymm this (add_one_le_of_lt `a > 0`))
-  (assume : a > 1,
+  (suppose a > 1,
     have a * b ≥ 2 * 1,
       from mul_le_mul (add_one_le_of_lt `a > 1`) (add_one_le_of_lt `b > 0`) trivial H,
     have false, by rewrite [H' at this]; exact this,
@@ -111,7 +111,7 @@ eq_one_of_mul_eq_self_left Hpos (!mul.comm ▸ H)
 theorem eq_one_of_dvd_one {a : ℤ} (H : a ≥ 0) (H' : a ∣ 1) : a = 1 :=
 dvd.elim H'
   (assume b,
-    assume : 1 = a * b,
+    suppose 1 = a * b,
     eq_one_of_mul_eq_one_right H this⁻¹)
 
 theorem exists_least_of_bdd {P : ℤ → Prop} [HP : decidable_pred P]
